@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Howard I Grapek <grapekh@pbso.org>
+ * Copyright (c) 2018 by Howard I Grapek <howiegrapek@yahoo.com>
  *
  * GPL License:
  * Permission to use, copy, modify, and distribute this software for any
@@ -16,35 +16,19 @@
  *
  * Howie's Notes...
  * This is basically a network scanner - like nmap - written in GO language
- *
- * Howie Note: Use information from these github locations:
- * https://github.com/jessfraz/netscan
- *
- *
- * For now, we won't load the files, but use defaults instead.
-
-* Use google's getopt package.
-*
-* Google has created a getopt package (import "github.com/pborman/getopt") which provides the more
-* standard command line parsing (vs the 'flag' package).
- *
+ * First piece - just a stub to prove connectivity and compile environment. 
  */
 
-
-
-// This will be the miner check and report program
-// The normal port to check will be: 4028
+// Description:
+// This will ultimately be the miner check and report program
+// The normal port to check for miners will be: 4028
 //
-// For the Decred Miner, I found this:
+// For one of my Decred Miners, I found this to verify the port:
 //
 // C:\Users\howie\Apps\Nmap>echo {"command":"version"} | ncat 10.0.0.5 4028
 // {"STATUS":[{"STATUS":"S","When":1532052885,"Code":22,"Msg":"CGMiner versions","Description":"sgminer 4.4.2"}],"VERSION":[{"CGMiner":"4.4.2","API":"3.4"}],"id":1}
 // C:\Users\howie\Apps\Nmap>
 //
-// We will use the cgimer_api_dstaley_tester.go for the main example script.
-// and the cgminer_api_package.go for the main code.
-// I have played with: cgminer_api_test.go  -it has some examples on how to get summary, devs and pools.
-// It also has an example on how to set a pool, but we won't do that yet.
 
 package main
 
@@ -61,10 +45,10 @@ import (
 
 type MyNet struct {
 	IP           *net.IPNet			// CIDR Block - complete address
-	MyIp         net.IP				// x.x.x.x
+	MyIp         net.IP			// x.x.x.x
 	Netmask      net.IPMask			// ffffff00
-	Subnet       net.IP				// first ip address of network block based on netmask
-	AvailableIPs []string           // list of unique addresses of those which have miners on them
+	Subnet       net.IP			// first ip address of network block based on netmask
+	AvailableIPs []string          		// list of unique addresses of those which have miners on them
 }
 
 
