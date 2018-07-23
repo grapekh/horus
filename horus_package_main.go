@@ -47,6 +47,7 @@
  * 0.2 - grapek - find actual miners
  * 0.3 - grapek - use command line to accept ip, cidr block or default to local area network
  * 0.4 - grapek - actually connect and display some information from the miners. (use test stubs)
+ */
 
 package main
 
