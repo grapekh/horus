@@ -29,6 +29,9 @@
 // {"STATUS":[{"STATUS":"S","When":1532052885,"Code":22,"Msg":"CGMiner versions","Description":"sgminer 4.4.2"}],"VERSION":[{"CGMiner":"4.4.2","API":"3.4"}],"id":1}
 // C:\Users\howie\Apps\Nmap>
 //
+// libraries: 
+// cgminer.go - Used public API to break apart responses from miners. 
+// Currently in: c:\users\howie\go\src\cgminer-api
 
 package main
 
@@ -40,6 +43,7 @@ import (
 	"sync"
 	"os"
 	"strings"
+	"cgminer-api"			// Howie's Reqired Package. 
 )
 
 
@@ -89,8 +93,8 @@ const usage string =
 		"for any/all miners on the subnet.\n"
 
 
-//const connection_timeout = 2 * time.Second
-const connection_timeout = 20 * time.Millisecond
+const connection_timeout = 2 * time.Second
+//const connection_timeout = 20 * time.Millisecond
 
 //////////////////////////////////////////////////////////////
 // Get my external interface -
@@ -244,6 +248,61 @@ func inc(ip net.IP) {
 	}
 }
 
+
+////  
+// testing stubs
+////
+
+func Test_Summary(miner_ip string) {
+	miner := cgminer.New(miner_ip, 4028)
+	summary, err := miner.Summary()
+	if err != nil {
+		fmt.Println("Got an error back from miner.Summary: ", err)
+		return
+	}
+	if summary == nil {
+		fmt.Println("Summary returned nil")
+		return
+	}
+
+	fmt.Printf("Found Blocks: %d\n", summary.FoundBlocks)
+	fmt.Printf("Accepted: %d\n", summary.Accepted)
+	fmt.Printf("Rejected: %d\n", summary.Rejected)
+
+	//fmt.Printf("Status: %s\n", summary.Status)
+}
+
+
+func Test_Devs(miner_ip string) {
+	miner := cgminer.New(miner_ip, 4028)
+	devs, err := miner.Devs()
+	if err != nil {
+		fmt.Println("Got an error back from miner.Devs: ", err)
+		return
+	}
+	if devs == nil {
+		fmt.Println("Devs returned nil")
+		return
+	}
+	for _, dev := range *devs {
+		fmt.Printf("Dev %d temp: %f\n", dev.GPU, dev.Temperature)
+	}
+}
+
+
+func Test_Pools(miner_ip string) {
+	miner := cgminer.New(miner_ip, 4028)
+	pools, err := miner.Pools()
+	if err != nil {
+		fmt.Println("Got an error back from miner.Pools: ", err)
+		return
+	}
+	for _, pool := range pools {
+		fmt.Printf("Pool %d: %s\n", pool.Pool, pool.URL)
+	}
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func main() {
@@ -305,7 +364,8 @@ func main() {
 	// Ports to check - for testing, we can test multiple ports. 
 	// Note, for miners, the port required is only CGMiner: 4028, 
 	// for other nmap like operations, we can search for ssh, http, etc
-	ports := []string{"21", "22", "80", "4028"}
+	//ports := []string{"21", "22", "80", "4028"}
+	ports := []string{"4028"}
 
 	if debug {
 		fmt.Println("Ports being checked are: ", ports)
@@ -399,4 +459,20 @@ func main() {
 	}
 
 	fmt.Printf("Total Number of unique miners found: %d\n", num_miners) 
+
+	// Lets get some details from the miners (if any)
+	//for _, ip := range MyLanInfo.AvailableIPs {
+
+			ip := "10.0.0.5"
+
+			fmt.Printf("Getting summary information for: %s\n", ip)
+			Test_Summary(ip)
+
+			fmt.Printf("Getting dev information for: %s\n", ip)
+			Test_Devs(ip)
+			
+			fmt.Printf("Getting pool information for: %s\n", ip)
+			Test_Pools(ip)
+	//}
+
 }
