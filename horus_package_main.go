@@ -30,12 +30,12 @@
  * C:\Users\howie\Apps\Nmap>
  *
  * USAGE: 
-	Usage: horus.exe [-m value ...]
-		-m   	0 or more Miner addresses - can be mixture of CIDR blocks or IP addresses
-	
-		Note, If no value is specified for -m, the current local network will be searched +
-		for any/all miners on the subnet.
-
+ *	Usage: horus.exe [-m value ...]
+ *		-m   	0 or more Miner addresses - can be mixture of CIDR blocks or IP addresses
+ *	
+ *		Note, If no value is specified for -m, the current local network will be searched +
+ *		for any/all miners on the subnet.
+ *
  *
  * REQUIRED LIBRARIES: 
  * cgminer.go - Used public API to break apart responses from miners. 
