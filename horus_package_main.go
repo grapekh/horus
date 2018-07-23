@@ -17,21 +17,36 @@
  * Howie's Notes...
  * This is basically a network scanner - like nmap - written in GO language
  * First piece - just a stub to prove connectivity and compile environment. 
- */
+ *
+ *
+ * Description:
+ * This will ultimately be the miner check and report program
+ * The normal port to check for miners will be: 4028
+ * 
+ * For one of my Decred Miners, I found this to verify the port:
+ *
+ * C:\Users\howie\Apps\Nmap>echo {"command":"version"} | ncat 10.0.0.5 4028
+ * {"STATUS":[{"STATUS":"S","When":1532052885,"Code":22,"Msg":"CGMiner versions","Description":"sgminer 4.4.2"}],"VERSION":[{"CGMiner":"4.4.2","API":"3.4"}],"id":1}
+ * C:\Users\howie\Apps\Nmap>
+ *
+ * USAGE: 
+	Usage: horus.exe [-m value ...]
+		-m   	0 or more Miner addresses - can be mixture of CIDR blocks or IP addresses
+	
+		Note, If no value is specified for -m, the current local network will be searched +
+		for any/all miners on the subnet.
 
-// Description:
-// This will ultimately be the miner check and report program
-// The normal port to check for miners will be: 4028
-//
-// For one of my Decred Miners, I found this to verify the port:
-//
-// C:\Users\howie\Apps\Nmap>echo {"command":"version"} | ncat 10.0.0.5 4028
-// {"STATUS":[{"STATUS":"S","When":1532052885,"Code":22,"Msg":"CGMiner versions","Description":"sgminer 4.4.2"}],"VERSION":[{"CGMiner":"4.4.2","API":"3.4"}],"id":1}
-// C:\Users\howie\Apps\Nmap>
-//
-// libraries: 
-// cgminer.go - Used public API to break apart responses from miners. 
-// Currently in: c:\users\howie\go\src\cgminer-api
+ *
+ * REQUIRED LIBRARIES: 
+ * cgminer.go - Used public API to break apart responses from miners. 
+ * Currently in: c:\users\howie\go\src\cgminer-api
+ *
+ * Version History: 
+ * 
+ * 0.1 - grapek - original start to walk network
+ * 0.2 - grapek - find actual miners
+ * 0.3 - grapek - use command line to accept ip, cidr block or default to local area network
+ * 0.4 - grapek - actually connect and display some information from the miners. (use test stubs)
 
 package main
 
@@ -58,7 +73,7 @@ type MyNet struct {
 
 // Global Constants and Variables. 
 
-var Horus_Version string = "Version 0.02"
+var Horus_Version string = "Version 0.04"
 var date = time.Now()	
 var date_string = date.Format("Mon Jan 02 2006 at 15:04:05")
 
