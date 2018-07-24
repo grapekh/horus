@@ -47,6 +47,7 @@
  * 0.2 - grapek - find actual miners
  * 0.3 - grapek - use command line to accept ip, cidr block or default to local area network
  * 0.4 - grapek - actually connect and display some information from the miners. (use test stubs)
+ * 0.5 - grapek - added "config" structure to the api code.   Repaired Dev structure.
  */
 
 package main
@@ -74,7 +75,7 @@ type MyNet struct {
 
 // Global Constants and Variables. 
 
-var Horus_Version string = "Version 0.04"
+var Horus_Version string = "Version 0.05"
 var date = time.Now()	
 var date_string = date.Format("Mon Jan 02 2006 at 15:04:05")
 
@@ -87,8 +88,7 @@ var remote = false
 // and a bool for debugging
 var ips []string
 var ports []string
-var debug bool = false
-
+var debug bool = false			// first level debug
 
 // A WaitGroup waits for a collection of goroutines to finish. The main loop calls Add(1)
 // to set the number of goroutines to wait for. Then each of the goroutines runs and calls Done
@@ -281,13 +281,12 @@ func Test_Summary(miner_ip string) {
 		return
 	}
 
-	fmt.Printf("Found Blocks: %d\n", summary.FoundBlocks)
-	fmt.Printf("Accepted: %d\n", summary.Accepted)
-	fmt.Printf("Rejected: %d\n", summary.Rejected)
+	fmt.Printf("...Found Blocks: %d\n", summary.FoundBlocks)
+	fmt.Printf("...Accepted: %d\n", summary.Accepted)
+	fmt.Printf("...Rejected: %d\n", summary.Rejected)
 
 	//fmt.Printf("Status: %s\n", summary.Status)
 }
-
 
 func Test_Devs(miner_ip string) {
 	miner := cgminer.New(miner_ip, 4028)
@@ -301,10 +300,9 @@ func Test_Devs(miner_ip string) {
 		return
 	}
 	for _, dev := range *devs {
-		fmt.Printf("Dev %d temp: %f\n", dev.GPU, dev.Temperature)
+		fmt.Printf("...Dev %d temp: %f\n", dev.ASC, dev.Temperature)
 	}
 }
-
 
 func Test_Pools(miner_ip string) {
 	miner := cgminer.New(miner_ip, 4028)
@@ -314,8 +312,22 @@ func Test_Pools(miner_ip string) {
 		return
 	}
 	for _, pool := range pools {
-		fmt.Printf("Pool %d: %s\n", pool.Pool, pool.URL)
+		fmt.Printf("...Pool %d: (URL: %s) (User: %s)\n", pool.Pool, pool.URL, pool.User)
 	}
+
+}
+
+func Test_Config(miner_ip string) {
+	miner := cgminer.New(miner_ip, 4028)
+	config, err := miner.Config()
+	if err != nil {
+		fmt.Println("Got an error back from miner.Config: ", err)
+		return
+	}
+	
+	fmt.Printf("...OS: %s\n", config.OS)
+	fmt.Printf("...Pool Count: %d\n", config.PoolCount)
+	fmt.Printf("...Strategy: %s\n", config.Strategy)
 }
 
 
@@ -476,19 +488,25 @@ func main() {
 
 	fmt.Printf("Total Number of unique miners found: %d\n", num_miners) 
 
+	fmt.Printf("\n\nHere is some information from the miners - just stub routines to prove we are getting info...\n\n")
+
 	// Lets get some details from the miners (if any)
-	//for _, ip := range MyLanInfo.AvailableIPs {
+	for _, ip := range MyLanInfo.AvailableIPs {
 
-			ip := "10.0.0.5"
+			//ip := "10.0.0.5"
+			fmt.Printf("\n\n.....Miner Information for ip: %s....\n", ip)
 
-			fmt.Printf("Getting summary information for: %s\n", ip)
+			fmt.Printf("\nSummary information:\n")
 			Test_Summary(ip)
 
-			fmt.Printf("Getting dev information for: %s\n", ip)
+			fmt.Printf("\nConfig information:\n")
+			Test_Config(ip)
+
+			fmt.Printf("\nDev information:\n")
 			Test_Devs(ip)
 			
-			fmt.Printf("Getting pool information for: %s\n", ip)
-			Test_Pools(ip)
-	//}
+			fmt.Printf("\nPool information:\n")
+			Test_Pools(ip)		
+	}
 
 }
