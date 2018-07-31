@@ -10,12 +10,10 @@ import (
 const version string = "V1.06"
 var Debug bool = false
 
-func Test_Cmdline_IP(iplist []string)  bool {
+func Test_Cmdline_IP(iplist []string) bool {
 
 	for _, ipl := range iplist {
-		if Debug {
-			fmt.Printf("Search the following for miners: %s\n", ipl)
-		}
+		if Debug { fmt.Printf("Search the following for miners: %s\n", ipl) }
 
 		trial := net.ParseIP(ipl)
 
@@ -26,9 +24,7 @@ func Test_Cmdline_IP(iplist []string)  bool {
         	continue
         }
 
-		if debug {
-        	fmt.Printf("Maybe it is a cidrblock? \n")
-        }
+		if Debug { fmt.Printf("Maybe it is a cidrblock? \n") }
 
 		ipA,ipnetA,_ := net.ParseCIDR(ipl)
         
@@ -38,24 +34,21 @@ func Test_Cmdline_IP(iplist []string)  bool {
     	}
 
 		if ipA.To4() != nil {
-			if Debug {
-        		fmt.Printf("%v is a valid IPv4 address as part of a cidr block ... continuing to next check\n", ipA)
-        	}
+			if Debug { fmt.Printf("%v is a valid IPv4 address as part of a cidr block ... continuing to next check\n", ipA) }
         	continue
         }
 
         // do we have a fatal error? 
-        fmt.Println("Error: Network address specified on command line: (", ipl, ") is not a valid IP address or CIDR block.  Exiting.")
-        os.Exit(1)
+        fmt.Println("Error: Network address specified on command line: (", ipl, ") is not a valid IP address or CIDR block.")
+        return false
     }
-
-
 
 	return true
 }
 
 func main() {
-    	usage := `
+
+	usage := `
 	Horus: The Local Area Network Miner Explorer:
 
 	Display information for any ASIC Miners found on the local area network. 
@@ -99,9 +92,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	if *dbgPtr == true {
-		Debug = true
-	}
+	if *dbgPtr == true { Debug = true }
 
 
  	//
@@ -109,24 +100,24 @@ func main() {
 	// TODO - Validate that any/all ip's are either IP or CIDR block format. 
 	//
 
-	if Debug {
-		fmt.Println("IP / CIDR Blocks Specified:", flag.Args())
-	}
+	if Debug { fmt.Println("IP / CIDR Blocks Specified:", flag.Args()) }
 
 	//ipl := flag.Args()
 	// Lets validate the arguments. 
 	if Test_Cmdline_IP(flag.Args()) {
-		if Debug {
-			fmt.Println("Commandlines Are All Good!!!", flag.Args())
-		}
+		if Debug { fmt.Println("Commandlines Are All Good!!!", flag.Args()) }
+	} else {
+		if Debug { fmt.Println("Error: network address specified not valid. Exiting.") }
+		os.Exit(1)
 	}
 	
-   	// We're good here - lets process and continue. 
-    	if len(flag.Args()) > 0 {
+    // We're good here - lets process and continue. 
+    if len(flag.Args()) > 0 {
    		fmt.Println("All addresses are valid - continuing to parse...")
-    		fmt.Println("IP / CIDR Blocks Specified:", flag.Args())
-    	} else {
-    		fmt.Println("No commandline arguments specified - using current LAN.")
-    	}
+    	fmt.Println("IP / CIDR Blocks Specified:", flag.Args())
+    } else {
+    	fmt.Println("No commandline arguments specified - using current LAN.")
+    }
+
 }
 
