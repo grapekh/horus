@@ -32,7 +32,7 @@ func Test_Cmdline_IP(iplist []string)  bool {
 
 		ipA,ipnetA,_ := net.ParseCIDR(ipl)
         
-        if dDbug {
+        if Debug {
     			fmt.Println("ipA              : ", ipA)
     			fmt.Println("ipnetA           : ", ipnetA)
     	}
@@ -55,9 +55,7 @@ func Test_Cmdline_IP(iplist []string)  bool {
 }
 
 func main() {
-
-	
-	usage := `
+    	usage := `
 	Horus: The Local Area Network Miner Explorer:
 
 	Display information for any ASIC Miners found on the local area network. 
@@ -118,16 +116,17 @@ func main() {
 	//ipl := flag.Args()
 	// Lets validate the arguments. 
 	if Test_Cmdline_IP(flag.Args()) {
-		fmt.Println("Commandlines Are All Good!!!", flag.Args())
+		if Debug {
+			fmt.Println("Commandlines Are All Good!!!", flag.Args())
+		}
 	}
 	
-    // We're good here - lets process and continue. 
-    if len(flag.Args()) > 0 {
+   	// We're good here - lets process and continue. 
+    	if len(flag.Args()) > 0 {
    		fmt.Println("All addresses are valid - continuing to parse...")
-    	fmt.Println("IP / CIDR Blocks Specified:", flag.Args())
-    } else {
-    	fmt.Println("No commandline arguments specified - using current LAN.")
-    }
-
+    		fmt.Println("IP / CIDR Blocks Specified:", flag.Args())
+    	} else {
+    		fmt.Println("No commandline arguments specified - using current LAN.")
+    	}
 }
 
